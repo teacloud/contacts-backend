@@ -1,0 +1,115 @@
+
+service: contacts-backend
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+  stage: dev
+  region: us-east-2
+
+custom:
+  serverless-offline:
+    httpPort: 5000
+    stageVariables:
+      foo: "bar"
+# you can add statements to the Lambda function's IAM Role here
+#  iamRoleStatements:
+#    - Effect: "Allow"
+#      Action:
+#        - "s3:ListBucket"
+#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
+#    - Effect: "Allow"
+#      Action:
+#        - "s3:PutObject"
+#      Resource:
+#        Fn::Join:
+#          - ""
+#          - - "arn:aws:s3:::"
+#            - "Ref" : "ServerlessDeploymentBucket"
+#            - "/*"
+
+# you can define service wide environment variables here
+#  environment:
+#    variable1: value1
+
+# you can add packaging information here
+#package:
+#  patterns:
+#    - '!exclude-me.js'
+#    - '!exclude-me-dir/**'
+#    - include-me.js
+#    - include-me-dir/**
+
+functions:
+  ### Agents
+  getAgents:
+    handler: functions/agents/getAgents.handler
+    events:
+      - httpApi:
+          path: /agents
+          method: get
+  getAgent:
+    handler: functions/agents/getAgent.handler
+    events:
+      - httpApi:
+          path: /agents/{id}
+          method: get
+  updateAgent:
+    handler: functions/agents/updateAgent.handler
+    events:
+      - httpApi:
+          path: /agents/{id}
+          method: put    
+  createAgent:
+    handler: functions/agents/createAgent.handler
+    events:
+      - httpApi:
+          path: /agents
+          method: post  
+
+  ### Customers
+  createCustomer:
+    handler: functions/customers/createCustomer.handler
+    events:
+      - httpApi:
+          path: /customers
+          method: post 
+  updateCustomer:
+    handler: functions/customers/updateCustomer.handler
+    events:
+      - httpApi:
+          path: /customers/{id}
+          method: put  
+  deleteCustomer:
+    handler: functions/customers/deleteCustomer.handler
+    events:
+      - httpApi:
+          path: /customers/{id}
+          method: delete    
+  getCustomer:
+    handler: functions/customers/getCustomer.handler
+    events:
+      - httpApi:
+          path: /customers/{id}
+          method: get 
+  getCustomerByAgent:
+    handler: functions/customers/getCustomersByAgent.handler
+    events:
+      - httpApi:
+          path: /agents/{id}/customers
+          method: get                                                                       
+# you can add CloudFormation resource templates here
+#resources:
+#  Resources:
+#    NewResource:
+#      Type: AWS::S3::Bucket
+#      Properties:
+#        BucketName: my-new-bucket
+#  Outputs:
+#     NewOutput:
+#       Description: "Description for the output"
+#       Value: "Some output value"
+plugins:
+  - serverless-offline
